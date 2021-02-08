@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ftheadlines</title>
+       <style>
+        /* Styling for the search bar */        
+        input[type=text] {
+            width: 20%;
+            border: 2px solid #aaa;
+            border-radius: 4px;
+            margin: 8px 0;
+            outline: none;
+            padding: 8px;
+            box-sizing: border-box;
+            transition: .3s;
+            margin-left: 42em;
+        }
+        /* Styling for the headers and table */        
+        @charset "UTF-8";
+        body {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 300;
+            line-height: 1.42em;
+            color: #A7A1AE;
+            background-color: #1F2739;
+        }
+        
+        h1 {
+            font-size: 3em;
+            font-weight: 300;
+            line-height: 1em;
+            text-align: center;
+        }
+        
+        .container {
+            text-align: left;
+            overflow: hidden;
+            width: 95%;
+            margin: 0 auto;
+            display: table;
+            padding: 0 0 0em 0;
+        }
+        
+        .container td,
+        .container th {
+            padding-bottom: 2%;
+            padding-top: 2%;
+            padding-left: 2%;
+        }
+        /* Background-color of the odd rows */        
+        .container tr:nth-child(odd) {
+            background-color: #323C50;
+        }
+        /* Background-color of the even rows */        
+        .container tr:nth-child(even) {
+            background-color: #2C3446;
+        }
+        
+        .container th {
+            color: #185875;
+            background-color: #1F2739;
+        }
+        
+        .container td:first-child {
+            color: #FB667A;
+        }
+        
+        .container td:hover {
+            background-color: #FFF842;
+            color: #403E10;
+            font-weight: bold;
+            transition-delay: 0s;
+            transition-duration: 0.4s;
+            transition-property: all;
+            transition-timing-function: line;
+        }
+                
+        .btn {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: normal;
+            color: #A7A1AE;
+            text-transform: uppercase;
+            background-color: transparent;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            margin-top: 20px;
+            margin-left: 5px;
+            background: #323C50;
+        }
+        
+        
+        .btn:hover {
+            background-color: #FFF842;
+            color: #403E10;
+            font-weight: bold;
+            transition-delay: 0s;
+            transition-duration: 0.4s;
+            transition-property: all;
+            transition-timing-function: line;
+        }
+        
+        
+        div {
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+ 
+</head>
+
+<body>
+    <h1>Headlines From The Financial Times</h1>
+
+
+    <input type="text" name="search" id="input" />
+    <button id="search" class="btn">Search</button>
+    
+    <p id="demo"></p>
+
+       <div id="myData"></div>
+
+<table class="container" id="myTable">
+        <thead>
+            <tr>
+                <th>Headline</th>
+    
+            </tr>
+        </thead>
+        <tbody id="myBody"></tbody>
+    </table>
+</body>
+    
+       <script>
+    function onLoad() {
+
+    }
+
+    document.getElementById("search").onclick = function() {
+        var table = document.getElementById("myTable");
+
+        while (table.rows.length > 1) {
+            table.deleteRow(1);
+        }
+
+
+        var str = document.getElementById("input").value;
+        var myHeaders = new Headers();
+        myHeaders.append("X-Api-Key", "59cbaf20e3e06d3565778e7b0a57bcd9ad824956bb57d215518618ef");
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "queryString": "title:\"" + str + "\"",
+            "resultContext": {
+                "aspects": ["title"]
+            }
+        });
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        const proxyurl = "https://cors-anywhere.herokuapp.com/";
+        const url = "https://api.ft.com/content/search/v1"; // site that doesn’t send Access-Control-*
+
+        fetch(proxyurl + url, requestOptions) // https://cors-anywhere.herokuapp.com/https://example.com
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                var cell = data.results[0].results;
+                for (var key in cell) {
+
+                    var tableRef = document.getElementById('myTable')
+                    var newRow = tableRef.insertRow(tableRef.rows.length);
+                    var newCell = newRow.insertCell(0);
+                    var newText = document.createTextNode(cell[key].title.title)
+                    newCell.appendChild(newText);
+
+                }
+
+            })
+            .catch(function(err) {
+
+            })
+    }
+
+
+
+</script>
+    
+
+</html>
+
